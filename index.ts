@@ -1,5 +1,5 @@
-import type { App, ObjectDirective, Plugin } from "vue";
-import type { DirectiveOptions } from "vue2";
+import type { App, ObjectDirective, Plugin, DirectiveHook } from "vue";
+import type { DirectiveOptions, VueConstructor, DirectiveFunction } from "vue2";
 import mem from "mem";
 
 type Truthy<T> = T extends false | "" | 0 | null | undefined ? never : T;
@@ -36,8 +36,7 @@ export const variantwind = mem((className: string) => {
   return plainClasses + " " + processedClasses;
 });
 
-//@ts-ignore
-const process = (el) => {
+const process = (el: HTMLElement) => {
   el.className = variantwind(el.className);
 };
 
@@ -72,7 +71,9 @@ export const extractor = (content: string) => {
   return broadMatches.concat(innerMatches, extract);
 };
 
-//@ts-ignore
-export default (app, directiveName = "variantwind") => {
-  app.directive(directiveName, app.version[0] === "3" ? directive : directive2);
+export default (app: App | VueConstructor, directiveName = "variantwind") => {
+  if (app.version[0] === "3") {
+    (app as App).directive(directiveName, directive);
+  }
+  (app as VueConstructor).directive(directiveName, directive2);
 };
