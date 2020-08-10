@@ -1,5 +1,5 @@
-import type { App, ObjectDirective, Plugin, DirectiveHook } from "vue";
-import type { DirectiveOptions, VueConstructor, DirectiveFunction } from "vue2";
+import type { App, ObjectDirective } from "vue";
+import type { DirectiveOptions, VueConstructor } from "vue2";
 import mem from "mem";
 
 type Truthy<T> = T extends false | "" | 0 | null | undefined ? never : T;
