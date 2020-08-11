@@ -1,18 +1,13 @@
 import type { App, ObjectDirective } from "vue";
 import type { DirectiveOptions, VueConstructor } from "vue2";
-import mem from "mem";
 
-type Truthy<T> = T extends false | "" | 0 | null | undefined ? never : T;
+const matchBlocks = (val: string) => val.match(/\w*:\{(.*?)\}/g);
 
-function isTruthy<T>(value: T): value is Truthy<T> {
-  return !!value;
-}
-
-export const variantwind = mem((className: string) => {
+export const variantwind = (className: string) => {
   let plainClasses = className;
 
   // Array of blocks, e.g. ["lg:{bg-red-500 hover:bg-red-900}"]
-  const blocks = className.match(/\w*:\{(.*?)\}/g);
+  const blocks = matchBlocks(className);
 
   if (!blocks) {
     return plainClasses;
@@ -25,7 +20,7 @@ export const variantwind = mem((className: string) => {
 
       const withVariants = classes
         .replace(/\{|\}/g, "")
-        .replace(" ", " " + variant + ":");
+        .replace(/\s/g, " " + variant + ":");
 
       return withVariants.startsWith(variant)
         ? withVariants
@@ -34,10 +29,19 @@ export const variantwind = mem((className: string) => {
     .join(" ");
 
   return plainClasses + " " + processedClasses;
-});
+};
 
-const process = (el: HTMLElement) => {
-  el.className = variantwind(el.className);
+const cache = new Map();
+const process = (el: HTMLElement, binding: any) => {
+  const classes = `${el.className} ${binding.value}`;
+  const cached = cache.get(classes);
+  if (cached) {
+    el.className = cached;
+  } else {
+    const generated = variantwind(classes);
+    cache.set(classes, generated);
+    el.className = generated;
+  }
 };
 
 export const directive: ObjectDirective = {
@@ -51,15 +55,8 @@ export const directive2: DirectiveOptions = {
 };
 
 export const extractor = (content: string) => {
-  let extract: string[] = [];
-  const match = content.match(/[^<]*[^>]/g);
-
-  if (match) {
-    extract = match
-      .map((item) => item.match(/\w*:\{(.*?)\}/g))
-      .filter(isTruthy)
-      .flatMap((classes) => variantwind(classes.join(" ")).trim().split(" "));
-  }
+  const match = variantwind(content);
+  const extract = match !== content ? match.split(" ") : [];
 
   // Capture as liberally as possible, including things like `h-(screen-1.5)`
   const broadMatches = content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [];
@@ -71,9 +68,23 @@ export const extractor = (content: string) => {
   return broadMatches.concat(innerMatches, extract);
 };
 
-export default (app: App | VueConstructor, directiveName = "variantwind") => {
-  if (app.version[0] === "3") {
-    (app as App).directive(directiveName, directive);
+export default (
+  app: App | VueConstructor,
+  directiveName: string | string[] = "variantwind"
+) => {
+  if (Array.isArray(directiveName)) {
+    if (app.version[0] === "3") {
+      directiveName.map((name) => (app as App).directive(name, directive));
+    } else {
+      directiveName.map((name) =>
+        (app as VueConstructor).directive(name, directive2)
+      );
+    }
+  } else {
+    if (app.version[0] === "3") {
+      (app as App).directive(directiveName, directive);
+    } else {
+      (app as VueConstructor).directive(directiveName, directive2);
+    }
   }
-  (app as VueConstructor).directive(directiveName, directive2);
 };
