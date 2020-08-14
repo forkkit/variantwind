@@ -17,6 +17,26 @@ export default [
     plugins: [typescript()],
   },
   {
+    input: 'src/plugin.ts',
+    output: [
+      {
+        file: 'dist/browser.js',
+        format: 'iife',
+      },
+    ],
+    plugins: [typescript()],
+  },
+  {
+    input: 'src/purge.ts',
+    output: [
+      {
+        file: 'dist/purge.js',
+        format: 'cjs',
+      },
+    ],
+    plugins: [typescript()],
+  },
+  {
     input: 'src/index.ts',
     output: {
       file: 'dist/index.d.ts',
