@@ -1,31 +1,26 @@
 {
-  "name": "variantwind",
-  "version": "0.10.2",
-  "description": "Tailwind Variant Directive for Vue",
-  "repository": "github:sibbngheid/variantwind",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "author": "sibbngheid",
+  "name": "@variantwind/monorepo",
+  "description": "TailwindCSS Variant Shorthands for Vue",
+  "author": "Sibbngheid<https://github.com/sibbngheid>",
   "license": "MIT",
-  "keywords": [
-    "variantwind",
-    "tailwind",
-    "tailwindcss",
-    "vue3"
-  ],
-  "files": [
-    "dist"
+  "private": true,
+  "workspaces": [
+    "packages/**"
   ],
   "scripts": {
-    "dev": "tsup index.ts --dts --format cjs,esm --watch",
-    "build": "tsup index.ts --dts --format cjs,esm"
+    "preinstall": "npx only-allow pnpm",
+    "dev": "pnpm -C ./packages/variantwind run dev"
   },
   "devDependencies": {
-    "mem": "^6.1.0",
-    "tsup": "^3.4.2",
-    "typescript": "^3.9.7",
-    "vue": "^3.0.0-rc.5",
-    "vue2": "npm:vue@2"
+    "@antfu/eslint-config-ts": "^0.2.14",
+    "eslint": "^7.5.0"
+  },
+  "eslintConfig": {
+    "ignorePatterns": [
+      "**/dist/*.*"
+    ],
+    "extends": [
+      "@antfu/eslint-config-ts"
+    ]
   }
 }

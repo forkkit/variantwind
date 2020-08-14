@@ -1,0 +1,42 @@
+{
+  "name": "variantwind",
+  "description": "TailwindCSS Variant Shorthands for Vue",
+  "author": "Sibbngheid<https://github.com/sibbngheid>",
+  "license": "MIT",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.esm.js",
+  "typing": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sibbngheid/variantwind.git"
+  },
+  "keywords": [
+    "vue",
+    "tailwind",
+    "vue-directive"
+  ],
+  "bugs": {
+    "url": "https://github.com/sibbngheid/variantwind/issues"
+  },
+  "homepage": "https://github.com/sibbngheid/variantwind#readme",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "rollup": "^2.22.1",
+    "rollup-plugin-dts": "^1.4.8",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.7",
+    "vue": "^3.0.0-rc.5",
+    "vue2": "npm:vue@2"
+  }
+}
